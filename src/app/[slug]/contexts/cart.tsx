@@ -28,8 +28,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleCart = () => { setIsOpen(prev => !prev) };
   const addProduct = (product: CartProducts) => {
-    setProducts(prev => ([...prev, product]))
+    const productIsAlreadyInCart = products.some(
+      (prevProduct) => prevProduct.id === product.id
+    )
+    if (!productIsAlreadyInCart) {
+      return setProducts((prev) => [...prev, product])
+    }
+    setProducts(prevProduct => {
+      return prevProduct.map((prevProduct) => {
+        if (prevProduct.id === product.id) {
+          return {
+            ...prevProduct,
+            quantity: prevProduct.quantity + product.quantity
+          }
+        }
+        return prevProduct
 
+      })
+    })
   };
   return (
     <CartContext.Provider
